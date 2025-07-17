@@ -1,23 +1,12 @@
 "use client";
-import React from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import React, { useState } from "react";
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from "@/components/ui/table";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { format } from "date-fns";
 import { categoryColors } from "../../../../../data/categories";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import {Tooltip,TooltipContent,TooltipTrigger,} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MoreHorizontal, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -31,9 +20,19 @@ const RECURRING_INTERVALS = {
 
 const TransactionsTable = ({ transactions }) => {
   
+  const [selectedIds, setSelectedIds] = useState([])
+  const [sortConfig, setSortConfig] = useState({
+    field:"",
+    direction:"",
+  })
   const router = useRouter()
   const filteredAndSortedTransactions = transactions;
-  const handleSort = () => {};
+  const handleSort = (field) => {
+    setSortConfig(current=>({
+      field,
+      direction:current.field === field && current.direction === "asc"?"desc":"asc"
+    }))
+  };
 
   return (
     <div className="">
@@ -50,19 +49,25 @@ const TransactionsTable = ({ transactions }) => {
                 className="cursor-pointer"
                 onClick={() => handleSort("date")}
               >
-                <div className="flex items-center">Date</div>
+                <div className="flex items-center">Date{sortConfig.field === 'date'&&(
+                  sortConfig.direction === "asc"?<ChevronUp className="ml-1 h-4 w-4" />:<ChevronDown className="ml-1 h-4 w-4" />
+                )}</div>
               </TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("category")}
               >
-                <div className="flex items-center">Category</div>
+                <div className="flex items-center">Category{sortConfig.field === 'category'&&(
+                  sortConfig.direction === "asc"?<ChevronUp className="ml-1 h-4 w-4" />:<ChevronDown className="ml-1 h-4 w-4" />
+                )}</div>
               </TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("amount")}
               >
-                <div className="flex items-center">Amount</div>
+                <div className="flex items-center">Amount{sortConfig.field === 'amount'&&(
+                  sortConfig.direction === "asc"?<ChevronUp className="ml-1 h-4 w-4" />:<ChevronDown className="ml-1 h-4 w-4" />
+                )}</div>
               </TableHead>
               <TableHead>Recurring</TableHead>
               <TableHead></TableHead>
